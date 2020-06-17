@@ -11,16 +11,29 @@ const directions = {
 let lastKnownScrollPosition = 0;
 let lastKnownScrollPositionT = 0;
 
-function changeDirection(scrollPosition) {
-  let currentKnownScrollPosition = scrollPosition;
-
-  if (currentKnownScrollPosition < lastKnownScrollPosition) {
-    directionIcon.textContent = `Direction ${directions.top}`;
-  } else {
-    directionIcon.textContent = `Direction ${directions.bottom}`;
-  }
-  lastKnownScrollPosition = scrollPosition;
+function currentFloor() {
+  let currentFloor = "";
+  floors.forEach((floor) => {
+    if (elevator.scrollTop > floor.offsetTop - floor.clientHeight) {
+      currentFloor = floor.innerText;
+    }
+  });
+  return currentFloor;
 }
-elevator.addEventListener("scroll", function (e) {
-  changeDirection(elevator.scrollTop);
-});
+
+function changeDirection() {
+  let currentKnownScrollPosition = elevator.scrollTop;
+  let currentIcon = "";
+  if (currentKnownScrollPosition < lastKnownScrollPosition) {
+    currentIcon = directions.top;
+  } else {
+    currentIcon = directions.bottom;
+  }
+  lastKnownScrollPosition = elevator.scrollTop;
+  return currentIcon;
+}
+
+function showAll() {
+  directionIcon.textContent = `${currentFloor()} - Direction:${changeDirection()}`;
+}
+elevator.addEventListener("scroll", showAll);
